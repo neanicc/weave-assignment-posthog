@@ -126,6 +126,15 @@ describe('scoreEngineers', () => {
     expect(alice.prs.filter((p) => p.capped).every((p) => p.points === 0)).toBe(true);
   });
 
+  it('computes stats from counted PRs, not ones over the cap', () => {
+    const prs = Array.from({ length: 7 }, (_, i) => pr(i + 1, { areas: [`a${i}`], type: i < 5 ? 'feat' : 'chore', churn: i < 5 ? 999 : 0 }));
+    const alice = scoreEngineers(dataset(prs), 90)[0];
+    expect(alice.stats.prCount).toBe(7);
+    expect(alice.stats.countedPrs).toBe(5);
+    expect(alice.stats.byType).toEqual({ feat: 5 });
+    expect(alice.stats.areas).toBe(5);
+  });
+
   it('counts only the best 10 reviews per person per day', () => {
     const prs = Array.from({ length: 12 }, (_, i) => pr(i + 1));
     const reviews = prs.map((p) => review(p.n, 'bob'));
@@ -137,6 +146,11 @@ describe('scoreEngineers', () => {
   it('counts distinct authors helped', () => {
     const ds = dataset([pr(1), pr(2), pr(3, { author: 'dan' })], [review(1, 'bob'), review(2, 'bob'), review(3, 'bob')]);
     expect(scoreEngineers(ds, 90).find((e) => e.login === 'bob')!.stats.authorsHelped).toBe(2);
+  });
+
+  it('does not count bots as people helped', () => {
+    const ds = dataset([pr(1), pr(2, { author: 'posthog', bot: true })], [review(1, 'bob'), review(2, 'bob')]);
+    expect(scoreEngineers(ds, 90).find((e) => e.login === 'bob')!.stats.authorsHelped).toBe(1);
   });
 
   it('filters PRs by mergedAt and reviews by submittedAt', () => {

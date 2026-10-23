@@ -12,7 +12,7 @@ function eng(over: Partial<EngineerScore>): EngineerScore {
     unblock: 0,
     prs: [],
     reviews: [],
-    stats: { prCount: 0, byType: {}, reviewCount: 0, authorsHelped: 0, areas: 0, hotShare: 0 },
+    stats: { prCount: 0, countedPrs: 0, byType: {}, reviewCount: 0, authorsHelped: 0, areas: 0, hotShare: 0 },
     ...over,
   };
 }

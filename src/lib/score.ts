@@ -35,6 +35,7 @@ export interface EngineerScore {
   reviews: ScoredReview[];
   stats: {
     prCount: number;
+    countedPrs: number;
     byType: Partial<Record<PrType, number>>;
     reviewCount: number;
     authorsHelped: number;
@@ -102,7 +103,7 @@ export function scoreEngineers(ds: Dataset, days: number): EngineerScore[] {
         unblock: 0,
         prs: [],
         reviews: [],
-        stats: { prCount: 0, byType: {}, reviewCount: 0, authorsHelped: 0, areas: 0, hotShare: 0 },
+        stats: { prCount: 0, countedPrs: 0, byType: {}, reviewCount: 0, authorsHelped: 0, areas: 0, hotShare: 0 },
       };
       people.set(login, e);
     }
@@ -136,15 +137,18 @@ export function scoreEngineers(ds: Dataset, days: number): EngineerScore[] {
     e.total = e.ship + e.fix + e.unblock;
     e.prs.sort((a, b) => b.points - a.points || b.churn - a.churn);
     e.reviews.sort((a, b) => b.points - a.points);
+    // Stats describe the work that earned points; capped items only add to the raw PR count.
+    const counted = e.prs.filter((p) => !p.capped);
     const byType: Partial<Record<PrType, number>> = {};
-    for (const p of e.prs) byType[p.type] = (byType[p.type] ?? 0) + 1;
+    for (const p of counted) byType[p.type] = (byType[p.type] ?? 0) + 1;
     e.stats = {
       prCount: e.prs.length,
+      countedPrs: counted.length,
       byType,
       reviewCount: e.reviews.length,
-      authorsHelped: new Set(e.reviews.map((r) => r.prAuthor)).size,
-      areas: new Set(e.prs.flatMap((p) => p.areas)).size,
-      hotShare: e.prs.length ? e.prs.reduce((s, p) => s + p.hotShare, 0) / e.prs.length : 0,
+      authorsHelped: new Set(e.reviews.filter((r) => !r.capped && !isBot(r.prAuthor)).map((r) => r.prAuthor)).size,
+      areas: new Set(counted.flatMap((p) => p.areas)).size,
+      hotShare: counted.length ? counted.reduce((s, p) => s + p.hotShare, 0) / counted.length : 0,
     };
   }
   return out.sort((a, b) => b.total - a.total || b.stats.areas - a.stats.areas || a.login.localeCompare(b.login));

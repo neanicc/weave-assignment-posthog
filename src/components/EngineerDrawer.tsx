@@ -114,7 +114,9 @@ export function EngineerDrawer({ engineer: e, days, onClose }: Props) {
                       {r.title} <span className="muted">by {r.prAuthor}</span>
                     </td>
                     <td className="col-type">{KIND_LABEL[r.kind]}</td>
-                    <td className="col-formula num">{r.capped ? 'over daily cap' : ''}</td>
+                    <td className="col-formula num">
+                      {r.capped ? 'over daily cap' : r.kind === 'approve' && r.points === 0 ? 'bare approval of bot PR' : ''}
+                    </td>
                     <td className="col-pts num">{fmt(r.points)}</td>
                   </tr>
                 ))}

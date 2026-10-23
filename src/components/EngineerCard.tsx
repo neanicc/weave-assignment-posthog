@@ -39,7 +39,10 @@ export function EngineerCard({ rank, engineer: e, max, onOpen }: Props) {
           <span className="num">{fmt(e.ship)}</span> ship · <span className="num">{fmt(e.fix)}</span> fix ·{' '}
           <span className="num">{fmt(e.unblock)}</span> unblock
           <br />
-          {e.stats.prCount.toLocaleString()} PRs ({feats} feat, {fixes} fix) · reviewed {e.stats.authorsHelped} people ·{' '}
+          {e.stats.prCount > e.stats.countedPrs
+            ? `${e.stats.prCount.toLocaleString()} PRs, ${e.stats.countedPrs} counted`
+            : `${e.stats.prCount} PRs`}{' '}
+          ({feats} feat, {fixes} fix) · reviewed {e.stats.authorsHelped} people ·{' '}
           {e.stats.areas} areas · {pct(e.stats.hotShare)} hot
         </p>
         <ul className="card-prs" aria-label="Highest-value PRs">

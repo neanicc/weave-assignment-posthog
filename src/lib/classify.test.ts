@@ -18,6 +18,8 @@ describe('parseType', () => {
     ['refactor(hogql): y', 'refactor', 'hogql'],
     ['Update README', 'other', null],
     ['61 fix action url', 'other', null],
+    ['constructor: allow empty options', 'other', null],
+    ['toString(x): y', 'other', 'x'],
   ])('%s → %s', (title, type, scope) => {
     expect(parseType(title)).toEqual({ type, scope });
   });

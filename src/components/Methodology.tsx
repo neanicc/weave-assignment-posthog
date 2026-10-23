@@ -42,8 +42,8 @@ export function Methodology({ hotAreas }: { hotAreas: string[] }) {
       </dl>
       <ul className="method-notes">
         <li>
-          <b>Size</b> {W.size.floor}–1.0 by log of lines changed (1,000+ lines = 1.0), ignoring lockfiles, snapshots and generated
-          code.
+          <b>Size</b> {W.size.floor}–1.0 by log of lines changed ({(10 ** W.size.logCap).toLocaleString()}+ lines = 1.0), ignoring
+          lockfiles, snapshots and generated code.
         </li>
         <li>
           <b>Hot</b> up to {1 + W.hot.maxBoost}× for files in the {hotAreas.length} areas touched by the most engineers, e.g.{' '}
@@ -59,7 +59,7 @@ export function Methodology({ hotAreas }: { hotAreas: string[] }) {
         <summary>Known limits</summary>
         <p>
           Only merged PRs are counted, so reviews on unmerged PRs are missing. PR type comes from the author&rsquo;s own title. Files
-          after the first 100 in a PR are ignored. GitHub can&rsquo;t reliably tell staff from community contributors.
+          after the first 100 and reviews after the first 100 in a PR are ignored. Hot areas are computed over the full 120 days. GitHub can&rsquo;t reliably tell staff from community contributors.
         </p>
       </details>
     </section>
