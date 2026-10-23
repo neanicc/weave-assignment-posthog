@@ -59,7 +59,9 @@ Humans only. Excluded: GraphQL `__typename == "Bot"`, logins ending in `[bot]`
 or `-bot`, and a denylist (`posthog`, `stamphog`, `dependabot*`,
 `posthog-js-upgrader`, `scheduled-actions-posthog`, `github-actions`, `greptile*`,
 `copilot*`). Bot-authored PRs give no Ship/Fix points, but a human reviewing them
-still earns Unblock points (reviewing agent PRs is real work).
+still earns Unblock points for comments or change requests (reviewing agent PRs
+is real work). A bare one-click approval of a bot PR earns 0, so rubber-stamping
+dependency bumps cannot inflate a ranking.
 
 ## Data
 
