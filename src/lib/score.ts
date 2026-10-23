@@ -134,7 +134,7 @@ export function scoreEngineers(ds: Dataset, days: number): EngineerScore[] {
     for (const p of e.prs) e[p.pillar] += p.points;
     e.unblock = e.reviews.reduce((s, r) => s + r.points, 0);
     e.total = e.ship + e.fix + e.unblock;
-    e.prs.sort((a, b) => b.points - a.points);
+    e.prs.sort((a, b) => b.points - a.points || b.churn - a.churn);
     e.reviews.sort((a, b) => b.points - a.points);
     const byType: Partial<Record<PrType, number>> = {};
     for (const p of e.prs) byType[p.type] = (byType[p.type] ?? 0) + 1;

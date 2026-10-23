@@ -163,6 +163,11 @@ describe('scoreEngineers', () => {
     expect(scoreEngineers(ds, 90).map((e) => e.login)).toEqual(['broad', 'narrow']);
   });
 
+  it('orders PRs by points, then by size when points tie', () => {
+    const ds = dataset([pr(1, { churn: 1500 }), pr(2, { churn: 90000 }), pr(3, { churn: 9 })]);
+    expect(scoreEngineers(ds, 90)[0].prs.map((p) => p.n)).toEqual([2, 1, 3]);
+  });
+
   it('returns nothing for an empty window', () => {
     expect(scoreEngineers(dataset([], []), 30)).toEqual([]);
   });
