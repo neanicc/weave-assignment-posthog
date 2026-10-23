@@ -157,6 +157,13 @@ button {
   transition: color var(--dur-ui) ease, transform var(--dur-press) var(--ease-out);
 }
 
+.segmented-icon {
+  display: grid;
+  place-items: center;
+  min-width: 38px;
+  padding: 5px 10px;
+}
+
 .segmented-option[aria-checked='true'] {
   color: var(--ink);
 }
