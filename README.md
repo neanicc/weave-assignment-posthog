@@ -28,7 +28,7 @@ A few rules keep the ranking fair:
 
 - **Daily cap.** Only a person's best 5 PRs and best 10 reviews per day count.
   The data showed why this is needed. One engineer merged 151 PRs in a single
-  day, and two reviewers each approved about 400 of that person's PRs.
+  day, and two reviewers each reviewed about 400 of that person's PRs.
 - **No bots.** Dependabot, PostHog's own automation accounts and deleted users
   are left out. People who review a bot's PR still earn points. Approving a bot's
   PR without a comment earns 0.
