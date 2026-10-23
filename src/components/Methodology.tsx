@@ -70,7 +70,7 @@ export function Methodology({ data }: { data: Dataset }) {
         </li>
         <li>
           <b>Bots</b> and deleted accounts are left out. Approving a bot&rsquo;s PR without a comment earns{' '}
-          {W.review.bareApproveOfBotPr}. Ties go to whoever worked in more areas.
+          {W.review.bareApproveOfBotPr}. Ties go to whoever worked in more areas, counting PRs under the cap.
         </li>
       </ul>
       <details className="method-limits">

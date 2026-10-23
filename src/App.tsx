@@ -106,7 +106,7 @@ export default function App() {
             <b>{view === 'ranking' ? 'Top 5' : 'Review network'}, last {days} days</b>
             <span className="muted">
               {' '}
-              · {prsInWindow.toLocaleString()} PRs by {ranked.length} engineers · data as of{' '}
+              · {prsInWindow.toLocaleString()} PRs · {ranked.length} engineers active · data as of{' '}
               {dateFmt.format(new Date(data.generatedAt))}
             </span>
           </p>
