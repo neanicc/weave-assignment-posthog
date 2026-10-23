@@ -8,7 +8,7 @@ import { join } from 'node:path';
 export const REPO = 'PostHog/posthog';
 export const WINDOW_DAYS = 120;
 const RAW_DIR = join(import.meta.dirname, '..', 'data', 'raw');
-const CONCURRENCY = 4;
+const CONCURRENCY = 10;
 const PAGE_SIZE = 50;
 
 const QUERY = `query($q: String!, $after: String) {

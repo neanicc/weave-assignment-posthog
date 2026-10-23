@@ -51,6 +51,14 @@ counts as a fix.
 This replaces the "fix 2" Ship weight from the first draft, which would have
 counted bug-fix PRs twice. A unit test asserts that no PR scores in both.
 
+**Daily cap.** Per person per UTC day, only the best 5 PRs and the best 10
+reviews count. The rest are listed in the drawer at 0 points, marked "over
+daily cap". Real data showed why: one engineer merged 151 PRs in a single day
+(agent-driven volume), and two reviewers each left about 400 reviews, almost all
+on that one person's PRs. Without a cap, volume alone decided the ranking.
+Generated files (`*/generated/*`, `snapshots.yml`, `posthog/schema*.py`) count as
+noise, and repo plumbing (root files, dotfolders, `docs/`) is never a hot area.
+
 Tiebreaker: number of distinct areas shipped in. Shown as a stat, not added.
 
 ### Who counts

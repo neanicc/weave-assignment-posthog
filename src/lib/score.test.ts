@@ -117,6 +117,23 @@ describe('scoreEngineers', () => {
     expect(carol.reviews.find((r) => r.pr === 1)!.points).toBe(0);
   });
 
+  it('counts only the best 5 PRs per person per day', () => {
+    const prs = Array.from({ length: 7 }, (_, i) => pr(i + 1, { churn: i === 6 ? 0 : 999 }));
+    const alice = scoreEngineers(dataset(prs), 90)[0];
+    expect(alice.ship).toBeCloseTo(5 * 3, 9);
+    expect(alice.prs.filter((p) => p.capped)).toHaveLength(2);
+    expect(alice.prs.find((p) => p.n === 7)!.capped).toBe(true);
+    expect(alice.prs.filter((p) => p.capped).every((p) => p.points === 0)).toBe(true);
+  });
+
+  it('counts only the best 10 reviews per person per day', () => {
+    const prs = Array.from({ length: 12 }, (_, i) => pr(i + 1));
+    const reviews = prs.map((p) => review(p.n, 'bob'));
+    const bob = scoreEngineers(dataset(prs, reviews), 90).find((e) => e.login === 'bob')!;
+    expect(bob.unblock).toBe(10);
+    expect(bob.reviews.filter((r) => r.capped)).toHaveLength(2);
+  });
+
   it('counts distinct authors helped', () => {
     const ds = dataset([pr(1), pr(2), pr(3, { author: 'dan' })], [review(1, 'bob'), review(2, 'bob'), review(3, 'bob')]);
     expect(scoreEngineers(ds, 90).find((e) => e.login === 'bob')!.stats.authorsHelped).toBe(2);

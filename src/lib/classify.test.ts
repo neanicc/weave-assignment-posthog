@@ -41,7 +41,7 @@ describe('areaOf', () => {
 });
 
 describe('isNoiseFile', () => {
-  it.each(['pnpm-lock.yaml', 'uv.lock', 'a/__snapshots__/b.ambr', 'x.snap', 'frontend/src/queries/schema.json'])(
+  it.each(['pnpm-lock.yaml', 'uv.lock', 'a/__snapshots__/b.ambr', 'x.snap', 'frontend/src/queries/schema.json', 'frontend/snapshots.yml', 'posthog/schema.py', 'posthog/schema_enums.py', 'frontend/src/generated/core/api.ts'])(
     '%s is noise',
     (path) => expect(isNoiseFile(path)).toBe(true),
   );

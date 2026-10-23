@@ -35,6 +35,9 @@ export function isNoiseFile(path: string): boolean {
     /\.lock$/.test(path) ||
     /\.(ambr|snap)$/.test(path) ||
     path.includes('__snapshots__/') ||
+    path.includes('/generated/') ||
+    /(^|\/)snapshots\.yml$/.test(path) ||
+    /^posthog\/schema(_enums)?\.py$/.test(path) ||
     path.endsWith('.json')
   );
 }

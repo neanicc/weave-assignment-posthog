@@ -6,4 +6,6 @@ export const WEIGHTS = {
   review: { approve: 0.5, comment: 1, changes: 1.5, bareApproveOfBotPr: 0 },
   size: { floor: 0.5, logCap: 3 }, // s = floor + (1 - floor) * min(1, log10(1 + churn) / logCap)
   hot: { maxBoost: 0.5, topShare: 0.1 }, // h = 1 + maxBoost * hotShare
+  // Per person per UTC day, only the best N items count; the rest show at 0 as "over daily cap".
+  caps: { prsPerDay: 5, reviewsPerDay: 10 },
 } as const;

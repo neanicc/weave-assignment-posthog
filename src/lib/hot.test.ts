@@ -19,6 +19,14 @@ describe('computeHotAreas', () => {
     expect(computeHotAreas(prs, 0.1)).toEqual(['a']);
   });
 
+  it('never marks repo plumbing as hot', () => {
+    const prs = ['u1', 'u2', 'u3'].flatMap((author) => [
+      { author, bot: false, areas: ['(root)', '.github/workflows', 'docs/internal'] },
+    ]);
+    prs.push({ author: 'u1', bot: false, areas: ['posthog/api'] });
+    expect(computeHotAreas(prs, 0.1)).toEqual(['posthog/api']);
+  });
+
   it('returns at least one area when any exist', () => {
     expect(computeHotAreas([{ author: 'u1', bot: false, areas: ['x'] }], 0.01)).toEqual(['x']);
     expect(computeHotAreas([], 0.1)).toEqual([]);
