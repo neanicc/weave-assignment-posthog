@@ -1,8 +1,8 @@
-import { useRef, type KeyboardEvent } from 'react';
+import { useRef, type KeyboardEvent, type ReactNode } from 'react';
 
 interface Props<T extends string | number> {
   label: string;
-  options: readonly { value: T; label: string }[];
+  options: readonly { value: T; label: string; icon?: ReactNode }[];
   value: T;
   onChange: (value: T) => void;
 }
@@ -32,10 +32,11 @@ export function Segmented<T extends string | number>({ label, options, value, on
           role="radio"
           aria-checked={o.value === value}
           tabIndex={o.value === value ? 0 : -1}
-          className="segmented-option"
+          className={o.icon ? 'segmented-option segmented-icon' : 'segmented-option'}
+          aria-label={o.icon ? o.label : undefined}
           onClick={() => onChange(o.value)}
         >
-          {o.label}
+          {o.icon ?? o.label}
         </button>
       ))}
     </div>

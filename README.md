@@ -41,6 +41,8 @@ Rank is Ship + Fix + Unblock. Ties go to whoever worked in more product areas.
 - **Hot areas** are the 10% of areas touched by the most distinct engineers.
 - **Bots** are removed: dependabot, PostHog's automation accounts and deleted users.
 - **Daily cap.** Only a person's best 5 PRs and best 10 reviews per day count.
+  No one ships 150 PRs a day by hand, so past that point extra volume shows how
+  much was automated, not more impact.
 - **Windows.** Scoring runs in the browser, so switching between 30, 90 and 120
   days is instant. 90 is the default.
 
@@ -85,6 +87,26 @@ Rank is Ship + Fix + Unblock. Ties go to whoever worked in more product areas.
   people with months of steady work.
 - The daily cap of 5 PRs is a judgment call. The #1 engineer still leads by about 2×.
 - Impact outside GitHub isn't visible: design docs, incident calls, mentoring.
+
+## Not done yet: automatic refresh
+
+The live site is a snapshot, dated by the "data as of Oct 23, 2026" label. To
+refresh it, someone reruns `npm run fetch` and `npm run build-data`, then pushes.
+A scheduled nightly refresh, such as a GitHub Action with a token, was left as a
+follow-up. The default Actions token gets 1,000 GraphQL points per hour, which
+is too few for a full run of about 900 points plus retries.
+
+## How it was built
+
+- **Plan first.** A short design doc and plan in [`docs/`](docs/), split into 5
+  ticket issues (#1 to #5).
+- **Two PRs.** One for the data and scoring (#6), and one stacked on it for the
+  UI and this README (#7). A one-line CI fix followed in #8.
+- **Two reviewers on every PR.** A Claude staff review that scores the PR, and
+  Greptile with rules from this project. Every P0 and P1 finding was fixed with a
+  test before merging.
+- **Repo skills** in `.agents/skills/workflow/` for commit, PR, staff review,
+  babysitting a PR and signoff.
 
 ## Run it yourself
 
