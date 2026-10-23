@@ -1,0 +1,9 @@
+node_modules/
+dist/
+data/raw/
+.env
+.env.*
+.vercel
+.DS_Store
+*.log
+coverage/

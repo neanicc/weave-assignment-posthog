@@ -1,0 +1,17 @@
+{
+  "strictness": 2,
+  "commentTypes": ["logic", "syntax", "style"],
+  "autoReview": ["open"],
+  "statusCheck": true,
+  "confidenceScoreSection": { "included": true, "collapsible": false, "defaultOpen": true },
+  "summarySection": { "included": true, "collapsible": true, "defaultOpen": false },
+  "ignorePatterns": "public/data.json\npackage-lock.json\ndocs/agent-log.md\n",
+  "instructions": "A static one-page dashboard ranking the top 5 most impactful PostHog engineers from GitHub data. Impact = Ship + Fix + Unblock points (see docs/superpowers/specs/2026-10-22-impact-dashboard-design.md and AGENTS.md). Prioritize: scoring that deviates from the design, PRs counted in two pillars, bots leaking into rankings, numbers shown without a derivation, incomplete pagination or date windows, tokens leaking into output, and UI that breaks the single-screen layout or one theme. Be specific, cite the line, skip praise.",
+  "rules": [
+    { "id": "one-pillar-per-pr", "rule": "A PR must score under exactly one of Ship or Fix. Flag any path that can add the same PR to both.", "scope": ["src/lib/**"], "severity": "high" },
+    { "id": "weights-single-source", "rule": "Scoring weights must come only from src/lib/weights.ts, and the methodology UI must render them from there rather than hard-coding numbers.", "scope": ["src/**"], "severity": "high" },
+    { "id": "humans-only", "rule": "Bot accounts must be excluded from rankings using the shared bot filter. Flag ranking code that bypasses it.", "scope": ["src/**", "scripts/**"], "severity": "high" },
+    { "id": "no-runtime-github", "rule": "The browser must never call the GitHub API; it reads public/data.json only.", "scope": ["src/**"], "severity": "medium" },
+    { "id": "no-secrets", "rule": "GitHub tokens must never be written to data files, logs or committed files.", "scope": ["scripts/**"], "severity": "high" }
+  ]
+}

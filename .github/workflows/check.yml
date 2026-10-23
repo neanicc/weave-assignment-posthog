@@ -1,0 +1,35 @@
+# Typecheck, tests and build on every PR and on main. See docs/ci.md.
+name: Check
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+jobs:
+  check:
+    name: check
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Skip until the app lands
+        id: app
+        run: |
+          if [ -f package.json ]; then echo "present=true" >> "$GITHUB_OUTPUT"; else echo "::notice::No package.json yet; scaffold only."; fi
+      - uses: actions/setup-node@v4
+        if: steps.app.outputs.present == 'true'
+        with:
+          node-version: 22
+          cache: npm
+      - if: steps.app.outputs.present == 'true'
+        run: npm ci
+      - if: steps.app.outputs.present == 'true'
+        run: npm run check
