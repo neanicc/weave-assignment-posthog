@@ -2,11 +2,12 @@
 // one GraphQL search per day (search caps at 1,000 results per query).
 // Raw pages land in data/raw/<day>.json; reruns skip days already on disk.
 import { execFileSync } from 'node:child_process';
-import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, statSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { needsFetch, windowDays } from './days.ts';
 
-export const REPO = 'PostHog/posthog';
-export const WINDOW_DAYS = 120;
+import { FETCH_LIMITS } from '../src/lib/limits.ts';
+import { REPO, WINDOW_DAYS } from './fetch-config.ts';
 const RAW_DIR = join(import.meta.dirname, '..', 'data', 'raw');
 const CONCURRENCY = 10;
 const PAGE_SIZE = 50;
@@ -19,8 +20,8 @@ const QUERY = `query($q: String!, $after: String) {
       number title url mergedAt createdAt additions deletions
       author { login __typename avatarUrl }
       labels(first: 10) { nodes { name } }
-      files(first: 100) { nodes { path additions deletions } }
-      reviews(first: 40) { nodes { author { login __typename } state body submittedAt comments { totalCount } } }
+      files(first: ${FETCH_LIMITS.filesPerPr}) { nodes { path additions deletions } }
+      reviews(first: ${FETCH_LIMITS.reviewsPerPr}) { totalCount nodes { author { login __typename } state body submittedAt comments { totalCount } } }
       closingIssuesReferences(first: 3) { nodes { number } }
     } }
   }
@@ -49,12 +50,6 @@ async function gql(tok: string, variables: Record<string, unknown>): Promise<any
   }
 }
 
-function utcDay(offset: number): string {
-  const d = new Date();
-  d.setUTCDate(d.getUTCDate() - offset);
-  return d.toISOString().slice(0, 10);
-}
-
 async function fetchDay(tok: string, day: string): Promise<void> {
   const q = `repo:${REPO} is:pr is:merged merged:${day}..${day}`;
   const nodes: unknown[] = [];
@@ -77,10 +72,10 @@ async function fetchDay(tok: string, day: string): Promise<void> {
 async function main(): Promise<void> {
   mkdirSync(RAW_DIR, { recursive: true });
   const tok = token();
-  // Today and yesterday are always refetched because they may still be filling in.
-  const days = Array.from({ length: WINDOW_DAYS }, (_, i) => utcDay(i)).filter(
-    (day, i) => i < 2 || !existsSync(join(RAW_DIR, `${day}.json`)),
-  );
+  const days = windowDays(Date.now(), WINDOW_DAYS).filter((day) => {
+    const file = join(RAW_DIR, `${day}.json`);
+    return needsFetch(day, existsSync(file) ? statSync(file).mtimeMs : null);
+  });
   console.log(`fetching ${days.length} days`);
   const queue = [...days];
   await Promise.all(

@@ -59,7 +59,8 @@ on that one person's PRs. Without a cap, volume alone decided the ranking.
 Generated files (`*/generated/*`, `snapshots.yml`, `posthog/schema*.py`) count as
 noise, and repo plumbing (root files, dotfolders, `docs/`) is never a hot area.
 
-Tiebreaker: number of distinct areas shipped in. Shown as a stat, not added.
+Tiebreaker: number of distinct areas shipped in, counting only PRs under the
+daily cap. Shown as a stat, not added.
 
 ### Who counts
 

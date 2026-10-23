@@ -5,7 +5,9 @@ import { isBot } from '../src/lib/bots.ts';
 import { areaOf, churnOf, isNoiseFile, parseType, reviewKind } from '../src/lib/classify.ts';
 import { computeHotAreas } from '../src/lib/hot.ts';
 import type { Dataset, PrRecord, ReviewRecord } from '../src/lib/types.ts';
+import { FETCH_LIMITS } from '../src/lib/limits.ts';
 import { WEIGHTS } from '../src/lib/weights.ts';
+import { WINDOW_DAYS } from './fetch-config.ts';
 
 const ROOT = join(import.meta.dirname, '..');
 const RAW_DIR = join(ROOT, 'data', 'raw');
@@ -20,16 +22,22 @@ interface RawPr {
   mergedAt: string;
   author: RawAuthor | null;
   files: { nodes: RawFile[] };
-  reviews: { nodes: { author: RawAuthor | null; state: string; body: string; submittedAt: string | null; comments: { totalCount: number } }[] };
+  reviews: { totalCount: number; nodes: { author: RawAuthor | null; state: string; body: string; submittedAt: string | null; comments: { totalCount: number } }[] };
   closingIssuesReferences: { nodes: { number: number }[] };
 }
 
-const days = readdirSync(RAW_DIR).filter((f) => f.endsWith('.json')).sort();
+// Only the newest WINDOW_DAYS files: older days left behind by earlier runs are dropped.
+const days = readdirSync(RAW_DIR).filter((f) => f.endsWith('.json')).sort().slice(-WINDOW_DAYS);
+for (let i = 1; i < days.length; i++) {
+  const gap = (Date.parse(days[i].slice(0, 10)) - Date.parse(days[i - 1].slice(0, 10))) / 86400e3;
+  if (gap !== 1) throw new Error(`missing raw days between ${days[i - 1]} and ${days[i]}; rerun npm run fetch`);
+}
 const raw = new Map<number, RawPr>();
 for (const day of days) {
   for (const pr of JSON.parse(readFileSync(join(RAW_DIR, day), 'utf8')) as RawPr[]) raw.set(pr.number, pr);
 }
 
+const truncatedReviews = [...raw.values()].filter((r) => r.reviews.totalCount > r.reviews.nodes.length).length;
 const avatars: Record<string, string> = {};
 const filesByPr = new Map<number, string[]>();
 const prs: PrRecord[] = [];
@@ -89,5 +97,6 @@ const humans = prs.filter((p) => !p.bot);
 console.log(`days ${days.length} (${days[0].slice(0, 10)} → ${days[days.length - 1].slice(0, 10)})`);
 console.log(`PRs ${prs.length}, human ${humans.length}, bot ${prs.length - humans.length}`);
 console.log(`reviews ${reviews.length}, engineers ${new Set(humans.map((p) => p.author)).size}`);
+console.log(`PRs with reviews beyond the first ${FETCH_LIMITS.reviewsPerPr}: ${truncatedReviews}`);
 console.log(`hot areas (${hotAreas.length}): ${hotAreas.join(', ')}`);
 console.log(`wrote ${OUT} ${(json.length / 1e6).toFixed(2)} MB`);

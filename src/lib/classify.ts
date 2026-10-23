@@ -2,14 +2,14 @@ import type { PrType, ReviewKind } from './types.ts';
 
 const PREFIX = /^(\w+)(\(([^)]*)\))?!?:/i;
 const CHORE_WORDS = new Set(['chore', 'docs', 'test', 'tests', 'ci', 'build', 'style']);
-const KNOWN: Record<string, PrType> = { feat: 'feat', fix: 'fix', perf: 'perf', refactor: 'refactor', revert: 'revert' };
+const KNOWN = new Map<string, PrType>([['feat', 'feat'], ['fix', 'fix'], ['perf', 'perf'], ['refactor', 'refactor'], ['revert', 'revert']]);
 
 /** Type and scope from a Conventional Commits title; hotfix and Revert titles count as fixes. */
 export function parseType(title: string): { type: PrType; scope: string | null } {
   const m = PREFIX.exec(title.trim());
   const word = m?.[1].toLowerCase();
   const scope = m?.[3]?.trim().toLowerCase() || null;
-  let type: PrType = !word ? 'other' : (KNOWN[word] ?? (CHORE_WORDS.has(word) ? 'chore' : 'other'));
+  let type: PrType = !word ? 'other' : (KNOWN.get(word) ?? (CHORE_WORDS.has(word) ? 'chore' : 'other'));
   if (/^revert\b/i.test(title.trim())) type = 'revert';
   else if (/hotfix/i.test(title) && type !== 'revert') type = 'fix';
   return { type, scope };
