@@ -51,7 +51,16 @@ counts as a fix.
 This replaces the "fix 2" Ship weight from the first draft, which would have
 counted bug-fix PRs twice. A unit test asserts that no PR scores in both.
 
-Tiebreaker: number of distinct areas shipped in. Shown as a stat, not added.
+**Daily cap.** Per person per UTC day, only the best 5 PRs and the best 10
+reviews count. The rest are listed in the drawer at 0 points, marked "over
+daily cap". Real data showed why: one engineer merged 151 PRs in a single day
+(agent-driven volume), and two reviewers each left about 400 reviews, almost all
+on that one person's PRs. Without a cap, volume alone decided the ranking.
+Generated files (`*/generated/*`, `snapshots.yml`, `posthog/schema*.py`) count as
+noise, and repo plumbing (root files, dotfolders, `docs/`) is never a hot area.
+
+Tiebreaker: number of distinct areas shipped in, counting only PRs under the
+daily cap. Shown as a stat, not added.
 
 ### Who counts
 
@@ -59,7 +68,9 @@ Humans only. Excluded: GraphQL `__typename == "Bot"`, logins ending in `[bot]`
 or `-bot`, and a denylist (`posthog`, `stamphog`, `dependabot*`,
 `posthog-js-upgrader`, `scheduled-actions-posthog`, `github-actions`, `greptile*`,
 `copilot*`). Bot-authored PRs give no Ship/Fix points, but a human reviewing them
-still earns Unblock points (reviewing agent PRs is real work).
+still earns Unblock points for comments or change requests (reviewing agent PRs
+is real work). A bare one-click approval of a bot PR earns 0, so rubber-stamping
+dependency bumps cannot inflate a ranking.
 
 ## Data
 
