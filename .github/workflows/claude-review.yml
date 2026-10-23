@@ -26,7 +26,8 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.base.sha }}
           fetch-depth: 0
-      - name: Fetch the PR head as a ref
+          persist-credentials: false
+      - name: Fetch the PR head as a ref (public repo, no stored credentials)
         env:
           PR: ${{ github.event.pull_request.number }}
         run: git fetch --no-tags origin "+refs/pull/${PR}/head:refs/remotes/pr/head"
