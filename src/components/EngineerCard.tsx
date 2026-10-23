@@ -1,4 +1,4 @@
-import { fmt, pct, prUrl, summary } from '../lib/format.ts';
+import { fmt, prUrl, summary } from '../lib/format.ts';
 import type { EngineerScore } from '../lib/score.ts';
 import { PillarBar } from './PillarBar.tsx';
 
@@ -10,16 +10,17 @@ interface Props {
 }
 
 export function EngineerCard({ rank, engineer: e, max, onOpen }: Props) {
-  const feats = e.stats.byType.feat ?? 0;
-  const fixes = (e.stats.byType.fix ?? 0) + (e.stats.byType.revert ?? 0);
-  const top = e.prs.slice(0, 3);
+  const prs =
+    e.stats.prCount > e.stats.countedPrs
+      ? `${e.stats.prCount.toLocaleString()} PRs, ${e.stats.countedPrs} counted`
+      : `${e.stats.prCount} PRs`;
   return (
     <article className="card" style={{ ['--i' as string]: rank - 1 }}>
       <div className="card-main">
         <span className="card-rank" aria-label={`Rank ${rank}`}>
           {rank}
         </span>
-        <img className="avatar" src={e.avatar} alt="" width={40} height={40} loading="lazy" />
+        <img className="avatar" src={e.avatar} alt="" width={32} height={32} loading="lazy" />
         <div className="card-id">
           <h3 className="card-name">
             <button type="button" className="stretched" onClick={() => onOpen(e.login)}>
@@ -28,25 +29,31 @@ export function EngineerCard({ rank, engineer: e, max, onOpen }: Props) {
           </h3>
           <p className="card-summary">{summary(e)}</p>
         </div>
+        <PillarBar ship={e.ship} fix={e.fix} unblock={e.unblock} max={max} />
         <div className="card-total">
           <span className="num">{fmt(e.total)}</span>
-          <span className="card-total-label">points</span>
+          <span className="card-total-label">pts</span>
         </div>
       </div>
-      <PillarBar ship={e.ship} fix={e.fix} unblock={e.unblock} max={max} />
       <div className="card-foot">
-        <p className="card-stats">
-          <span className="num">{fmt(e.ship)}</span> ship · <span className="num">{fmt(e.fix)}</span> fix ·{' '}
-          <span className="num">{fmt(e.unblock)}</span> unblock
-          <br />
-          {e.stats.prCount > e.stats.countedPrs
-            ? `${e.stats.prCount.toLocaleString()} PRs, ${e.stats.countedPrs} counted`
-            : `${e.stats.prCount} PRs`}{' '}
-          ({feats} feat, {fixes} fix) · reviewed {e.stats.authorsHelped} people ·{' '}
-          {e.stats.areas} areas · {pct(e.stats.hotShare)} hot
-        </p>
-        <ul className="card-prs" aria-label="Highest-value PRs">
-          {top.map((p) => (
+        <div className="subbox">
+          <p className="pillars">
+            <span>
+              <i className="swatch swatch-ship" aria-hidden /> Ship <b className="num">{fmt(e.ship)}</b>
+            </span>
+            <span>
+              <i className="swatch swatch-fix" aria-hidden /> Fix <b className="num">{fmt(e.fix)}</b>
+            </span>
+            <span>
+              <i className="swatch swatch-unblock" aria-hidden /> Unblock <b className="num">{fmt(e.unblock)}</b>
+            </span>
+          </p>
+          <p className="card-stats">
+            {prs} · reviewed {e.stats.authorsHelped} people · {e.stats.areas} areas
+          </p>
+        </div>
+        <ul className="subbox card-prs" aria-label="Highest value PRs">
+          {e.prs.slice(0, 2).map((p) => (
             <li key={p.n}>
               <a className="pr-link" href={prUrl(p.n)} target="_blank" rel="noreferrer">
                 <span className="pr-num">#{p.n}</span>

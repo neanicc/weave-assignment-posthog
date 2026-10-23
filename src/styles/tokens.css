@@ -1,4 +1,4 @@
-/* Hallmark · genre: modern-minimal · surface: dashboard · themes: cream (light) + obsidian (dark)
+/* Hallmark · genre: modern-minimal · surface: dashboard · themes: cream (light) + graphite (dark)
  * type: Geist · accent: editorial red (light) / amber (dark) · motion: quiet product
  */
 :root {
@@ -26,6 +26,7 @@
   --text-xs: 0.6875rem;
   --text-sm: 0.8125rem;
   --text-md: 0.875rem;
+  --text-body: 0.8125rem;
   --text-lg: 1rem;
   --text-xl: 1.375rem;
   --text-2xl: 1.75rem;
@@ -54,29 +55,37 @@
 }
 
 :root[data-theme='dark'] {
-  --ground: #1a1612;
-  --surface: #221d18;
-  --ink: #f0ebe4;
-  --accent: color-mix(in oklab, #f59e0b 88%, #f0ebe4);
-  --backdrop: color-mix(in oklab, #000 55%, transparent);
-  --shadow-float: 0 1px 2px color-mix(in oklab, #000 30%, transparent),
-    0 24px 48px -12px color-mix(in oklab, #000 60%, transparent);
-  --pillar-unblock: color-mix(in oklab, var(--ink) 34%, var(--ground));
+  --ground: #0e0e10;
+  --surface: #161619;
+  --ink: #ececee;
+  --accent: oklch(70% 0.14 28);
+  --text-2: color-mix(in oklab, var(--ink) 70%, var(--ground));
+  --text-3: color-mix(in oklab, var(--ink) 50%, var(--ground));
+  --tint: color-mix(in oklab, var(--ink) 5%, var(--surface));
+  --tint-2: color-mix(in oklab, var(--ink) 9%, var(--surface));
+  --backdrop: color-mix(in oklab, #000 60%, transparent);
+  --shadow-float: 0 1px 2px color-mix(in oklab, #000 40%, transparent),
+    0 24px 48px -12px color-mix(in oklab, #000 70%, transparent);
+  --pillar-unblock: color-mix(in oklab, var(--ink) 38%, var(--ground));
   color-scheme: dark;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
-    --ground: #1a1612;
-    --surface: #221d18;
-    --ink: #f0ebe4;
-    --accent: color-mix(in oklab, #f59e0b 88%, #f0ebe4);
-    --backdrop: color-mix(in oklab, #000 55%, transparent);
-    --shadow-float: 0 1px 2px color-mix(in oklab, #000 30%, transparent),
-      0 24px 48px -12px color-mix(in oklab, #000 60%, transparent);
-    --pillar-unblock: color-mix(in oklab, var(--ink) 34%, var(--ground));
+    --ground: #0e0e10;
+    --surface: #161619;
+    --ink: #ececee;
+    --accent: oklch(70% 0.14 28);
+    --text-2: color-mix(in oklab, var(--ink) 70%, var(--ground));
+    --text-3: color-mix(in oklab, var(--ink) 50%, var(--ground));
+    --tint: color-mix(in oklab, var(--ink) 5%, var(--surface));
+    --tint-2: color-mix(in oklab, var(--ink) 9%, var(--surface));
+    --backdrop: color-mix(in oklab, #000 60%, transparent);
+    --shadow-float: 0 1px 2px color-mix(in oklab, #000 40%, transparent),
+      0 24px 48px -12px color-mix(in oklab, #000 70%, transparent);
+    --pillar-unblock: color-mix(in oklab, var(--ink) 38%, var(--ground));
     color-scheme: dark;
-  }
+}
 }
 
 /* Theme switch: colour transitions are armed only while switching. */

@@ -9,57 +9,59 @@ export function Methodology({ hotAreas }: { hotAreas: string[] }) {
         How the points work
       </h2>
       <p className="method-lede">
-        Each merged PR lands in <b>Ship</b> or <b>Fix</b>, never both. Each review on someone else&rsquo;s PR adds to{' '}
-        <b>Unblock</b>. Rank = Ship + Fix + Unblock; ties go to whoever shipped in more areas.
+        Every merged PR scores in Ship or Fix, never both. Every review of someone else&rsquo;s PR scores in Unblock. Rank is
+        the sum of the three.
       </p>
-      <dl className="method-rows">
-        <div className="method-row">
-          <dt>
+      <div className="method-pillars">
+        <div className="subbox">
+          <p className="method-name">
             <i className="swatch swatch-ship" aria-hidden /> Ship
-          </dt>
-          <dd>
-            type × size × hot. feat {W.ship.feat} · perf {W.ship.perf} · refactor {W.ship.refactor} · untyped {W.ship.other} ·
-            chore/docs/test {W.ship.chore}
-          </dd>
+          </p>
+          <p>
+            Feature {W.ship.feat}, perf {W.ship.perf}, refactor {W.ship.refactor}, untyped {W.ship.other}, chore or docs{' '}
+            {W.ship.chore}. Then × size × hot.
+          </p>
         </div>
-        <div className="method-row">
-          <dt>
+        <div className="subbox">
+          <p className="method-name">
             <i className="swatch swatch-fix" aria-hidden /> Fix
-          </dt>
-          <dd>
-            fix, revert or hotfix PRs: {W.fix.base} × size × hot, +{W.fix.linkedIssueBonus} if it closes a linked issue
-          </dd>
+          </p>
+          <p>
+            Fix, revert or hotfix: {W.fix.base} × size × hot. Plus {W.fix.linkedIssueBonus} if it closes an issue.
+          </p>
         </div>
-        <div className="method-row">
-          <dt>
+        <div className="subbox">
+          <p className="method-name">
             <i className="swatch swatch-unblock" aria-hidden /> Unblock
-          </dt>
-          <dd>
-            best review per PR: approve {W.review.approve} · comment {W.review.comment} · changes requested {W.review.changes}.
-            A bare approval of a bot PR earns {W.review.bareApproveOfBotPr}
-          </dd>
+          </p>
+          <p>
+            Approve {W.review.approve}, comment {W.review.comment}, request changes {W.review.changes}. Best review per PR.
+          </p>
         </div>
-      </dl>
+      </div>
       <ul className="method-notes">
         <li>
-          <b>Size</b> {W.size.floor}–1.0 by log of lines changed ({(10 ** W.size.logCap).toLocaleString()}+ lines = 1.0), ignoring
-          lockfiles, snapshots and generated code.
+          <b>Size</b> runs from {W.size.floor} to 1. A {(10 ** W.size.logCap).toLocaleString()} line PR gets the full 1.
+          Lockfiles and generated files don&rsquo;t count.
         </li>
         <li>
-          <b>Hot</b> up to {1 + W.hot.maxBoost}× for files in the {hotAreas.length} areas touched by the most engineers, e.g.{' '}
-          {hotAreas.slice(0, 4).join(', ')}.
+          <b>Hot</b> adds up to {1 + W.hot.maxBoost}× for code many engineers touch, such as {hotAreas.slice(0, 2).join(' and ')}.
         </li>
         <li>
-          <b>Daily cap</b>: only a person&rsquo;s best {W.caps.prsPerDay} PRs and {W.caps.reviewsPerDay} reviews per day count, so
-          agent-driven volume and rubber-stamping can&rsquo;t buy rank.
+          <b>Daily cap.</b> Only a person&rsquo;s best {W.caps.prsPerDay} PRs and {W.caps.reviewsPerDay} reviews per day count.
+          One person merged 151 PRs in a single day.
         </li>
-        <li>Bots and deleted accounts are excluded; humans who review bot PRs still earn Unblock.</li>
+        <li>
+          <b>Bots</b> and deleted accounts are left out. Approving a bot&rsquo;s PR without a comment earns{' '}
+          {W.review.bareApproveOfBotPr}. Ties go to whoever worked in more areas.
+        </li>
       </ul>
       <details className="method-limits">
         <summary>Known limits</summary>
         <p>
-          Only merged PRs are counted, so reviews on unmerged PRs are missing. PR type comes from the author&rsquo;s own title. Files
-          after the first 100 and reviews after the first 100 in a PR are ignored. Hot areas are computed over the full 120 days. GitHub can&rsquo;t reliably tell staff from community contributors.
+          Only merged PRs count, so reviews on unmerged PRs are missing. The PR type comes from its title. A PR&rsquo;s files
+          and reviews past the first 100 are skipped. Hot areas use all 120 days. GitHub can&rsquo;t tell staff from community
+          contributors.
         </p>
       </details>
     </section>

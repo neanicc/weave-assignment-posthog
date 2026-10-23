@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { EngineerCard } from './components/EngineerCard.tsx';
 import { EngineerDrawer } from './components/EngineerDrawer.tsx';
 import { Methodology } from './components/Methodology.tsx';
+import { ReviewNetwork } from './components/ReviewNetwork.tsx';
 import { RunnersUp } from './components/RunnersUp.tsx';
 import { Segmented } from './components/Segmented.tsx';
 import { useDataset } from './hooks/useDataset.ts';
@@ -12,6 +13,11 @@ const WINDOWS = [
   { value: 90, label: '90d' },
   { value: 120, label: '120d' },
 ] as const;
+const VIEWS = [
+  { value: 'ranking', label: 'Ranking' },
+  { value: 'network', label: 'Network' },
+] as const;
+type View = (typeof VIEWS)[number]['value'];
 const THEMES = [
   { value: 'light', label: 'Light' },
   { value: 'dark', label: 'Dark' },
@@ -47,6 +53,7 @@ export default function App() {
   const { data, error } = useDataset();
   const [days, setDays] = useState<number>(90);
   const [open, setOpen] = useState<string | null>(null);
+  const [view, setView] = useState<View>('ranking');
   const [theme, setTheme] = useTheme();
 
   const ranked = useMemo(() => (data ? scoreEngineers(data, days) : []), [data, days]);
@@ -69,18 +76,34 @@ export default function App() {
         <div className="top-text">
           <h1 className="title">PostHog&rsquo;s most impactful engineers</h1>
           <p className="lede">
-            Ship + Fix + Unblock points from every merged PR and review in{' '}
+            Points for shipping, fixing and reviewing, from every merged PR in{' '}
             <a href="https://github.com/PostHog/posthog" target="_blank" rel="noreferrer">
               PostHog/posthog
             </a>
-            . Click anyone to see every point and the PR behind it.
+            . Click anyone to see each PR behind their score.
           </p>
         </div>
+      </header>
+
+      <div className="toolbar">
+        {data ? (
+          <p className="toolbar-meta">
+            <b>{view === 'ranking' ? 'Top 5' : 'Review network'}, last {days} days</b>
+            <span className="muted">
+              {' '}
+              · {prsInWindow.toLocaleString()} PRs by {ranked.length} engineers · data as of{' '}
+              {dateFmt.format(new Date(data.generatedAt))}
+            </span>
+          </p>
+        ) : (
+          <span />
+        )}
         <div className="top-controls">
+          <Segmented label="View" options={VIEWS} value={view} onChange={setView} />
           <Segmented label="Time window" options={WINDOWS} value={days} onChange={setDays} />
           <Segmented label="Theme" options={THEMES} value={theme} onChange={setTheme} />
         </div>
-      </header>
+      </div>
 
       {error && (
         <p className="state state-error" role="alert">
@@ -99,33 +122,17 @@ export default function App() {
 
       {data && (
         <main className="grid">
-          <section className="col-main" aria-labelledby="top-title">
-            <div className="section-head">
-              <h2 id="top-title" className="section-title">
-                Top 5, last {days} days
-              </h2>
-              <p className="section-meta">
-                {prsInWindow.toLocaleString()} human PRs · {ranked.length} engineers · data as of{' '}
-                {dateFmt.format(new Date(data.generatedAt))}
-              </p>
-              <ul className="legend" aria-label="Bar legend">
-                <li>
-                  <i className="swatch swatch-ship" aria-hidden /> Ship
-                </li>
-                <li>
-                  <i className="swatch swatch-fix" aria-hidden /> Fix
-                </li>
-                <li>
-                  <i className="swatch swatch-unblock" aria-hidden /> Unblock
-                </li>
-              </ul>
-            </div>
+          <section className="col-main" aria-label={view === 'ranking' ? `Top 5, last ${days} days` : 'Review network'}>
             {top.length === 0 && <p className="state">No human activity in this window.</p>}
-            <div className="cards">
-              {top.map((e, i) => (
-                <EngineerCard key={e.login} rank={i + 1} engineer={e} max={max} onOpen={setOpen} />
-              ))}
-            </div>
+            {view === 'ranking' ? (
+              <div className="cards">
+                {top.map((e, i) => (
+                  <EngineerCard key={e.login} rank={i + 1} engineer={e} max={max} onOpen={setOpen} />
+                ))}
+              </div>
+            ) : (
+              <ReviewNetwork data={data} days={days} engineers={ranked.slice(0, 12)} onOpen={setOpen} />
+            )}
           </section>
           <aside className="col-side">
             <Methodology hotAreas={data.hotAreas} />
