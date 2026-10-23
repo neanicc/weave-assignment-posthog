@@ -6,6 +6,7 @@ import { existsSync, mkdirSync, statSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { needsFetch, windowDays } from './days.ts';
 
+import { FETCH_LIMITS } from '../src/lib/limits.ts';
 import { REPO, WINDOW_DAYS } from './fetch-config.ts';
 const RAW_DIR = join(import.meta.dirname, '..', 'data', 'raw');
 const CONCURRENCY = 10;
@@ -19,8 +20,8 @@ const QUERY = `query($q: String!, $after: String) {
       number title url mergedAt createdAt additions deletions
       author { login __typename avatarUrl }
       labels(first: 10) { nodes { name } }
-      files(first: 100) { nodes { path additions deletions } }
-      reviews(first: 100) { totalCount nodes { author { login __typename } state body submittedAt comments { totalCount } } }
+      files(first: ${FETCH_LIMITS.filesPerPr}) { nodes { path additions deletions } }
+      reviews(first: ${FETCH_LIMITS.reviewsPerPr}) { totalCount nodes { author { login __typename } state body submittedAt comments { totalCount } } }
       closingIssuesReferences(first: 3) { nodes { number } }
     } }
   }

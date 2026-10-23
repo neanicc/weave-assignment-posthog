@@ -1,8 +1,25 @@
+import { useMemo } from 'react';
+import { FETCH_LIMITS } from '../lib/limits.ts';
+import type { Dataset } from '../lib/types.ts';
 import { WEIGHTS } from '../lib/weights.ts';
 
 const W = WEIGHTS;
 
-export function Methodology({ hotAreas }: { hotAreas: string[] }) {
+/** The most PRs one person merged in a single UTC day, the reason the daily cap exists. */
+function busiestDay(data: Dataset): number {
+  const counts = new Map<string, number>();
+  for (const p of data.prs) {
+    if (p.bot) continue;
+    const key = `${p.author}#${p.mergedAt.slice(0, 10)}`;
+    counts.set(key, (counts.get(key) ?? 0) + 1);
+  }
+  return Math.max(0, ...counts.values());
+}
+
+export function Methodology({ data }: { data: Dataset }) {
+  const hotAreas = data.hotAreas;
+  const busiest = useMemo(() => busiestDay(data), [data]);
+  const windowDays = Math.round((Date.parse(data.windowEnd) - Date.parse(data.windowStart)) / 86400e3);
   return (
     <section className="panel method" aria-labelledby="method-title">
       <h2 id="method-title" className="panel-title">
@@ -49,7 +66,7 @@ export function Methodology({ hotAreas }: { hotAreas: string[] }) {
         </li>
         <li>
           <b>Daily cap.</b> Only a person&rsquo;s best {W.caps.prsPerDay} PRs and {W.caps.reviewsPerDay} reviews per day count.
-          One person merged 151 PRs in a single day.
+          One person merged {busiest} PRs in a single day.
         </li>
         <li>
           <b>Bots</b> and deleted accounts are left out. Approving a bot&rsquo;s PR without a comment earns{' '}
@@ -60,7 +77,8 @@ export function Methodology({ hotAreas }: { hotAreas: string[] }) {
         <summary>Known limits</summary>
         <p>
           Only merged PRs count, so reviews on unmerged PRs are missing. The PR type comes from its title. A PR&rsquo;s files
-          and reviews past the first 100 are skipped. Hot areas use all 120 days. GitHub can&rsquo;t tell staff from community
+          past the first {FETCH_LIMITS.filesPerPr} and reviews past the first {FETCH_LIMITS.reviewsPerPr} are skipped. Hot areas
+          use all {windowDays} days. GitHub can&rsquo;t tell staff from community
           contributors.
         </p>
       </details>

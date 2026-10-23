@@ -5,6 +5,7 @@ import { isBot } from '../src/lib/bots.ts';
 import { areaOf, churnOf, isNoiseFile, parseType, reviewKind } from '../src/lib/classify.ts';
 import { computeHotAreas } from '../src/lib/hot.ts';
 import type { Dataset, PrRecord, ReviewRecord } from '../src/lib/types.ts';
+import { FETCH_LIMITS } from '../src/lib/limits.ts';
 import { WEIGHTS } from '../src/lib/weights.ts';
 import { WINDOW_DAYS } from './fetch-config.ts';
 
@@ -96,6 +97,6 @@ const humans = prs.filter((p) => !p.bot);
 console.log(`days ${days.length} (${days[0].slice(0, 10)} → ${days[days.length - 1].slice(0, 10)})`);
 console.log(`PRs ${prs.length}, human ${humans.length}, bot ${prs.length - humans.length}`);
 console.log(`reviews ${reviews.length}, engineers ${new Set(humans.map((p) => p.author)).size}`);
-console.log(`PRs with reviews beyond the first 100: ${truncatedReviews}`);
+console.log(`PRs with reviews beyond the first ${FETCH_LIMITS.reviewsPerPr}: ${truncatedReviews}`);
 console.log(`hot areas (${hotAreas.length}): ${hotAreas.join(', ')}`);
 console.log(`wrote ${OUT} ${(json.length / 1e6).toFixed(2)} MB`);

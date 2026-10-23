@@ -32,6 +32,21 @@ function initialTheme(): Theme {
 
 function useTheme(): [Theme, (t: Theme) => void] {
   const [theme, setThemeState] = useState<Theme>(initialTheme);
+  // Until the viewer picks a theme, follow the system setting live.
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
+    const follow = (ev: MediaQueryListEvent) => {
+      let saved: string | null = null;
+      try {
+        saved = localStorage.getItem('impact:theme');
+      } catch {
+        /* storage unavailable */
+      }
+      if (!saved) setThemeState(ev.matches ? 'dark' : 'light');
+    };
+    mq.addEventListener('change', follow);
+    return () => mq.removeEventListener('change', follow);
+  }, []);
   const setTheme = useCallback((t: Theme) => {
     const root = document.documentElement;
     root.classList.add('theming');
@@ -135,7 +150,7 @@ export default function App() {
             )}
           </section>
           <aside className="col-side">
-            <Methodology hotAreas={data.hotAreas} />
+            <Methodology data={data} />
             <RunnersUp engineers={ranked.slice(5, 10)} max={max} onOpen={setOpen} />
           </aside>
         </main>

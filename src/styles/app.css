@@ -1094,9 +1094,15 @@ button {
   .drawer-totals {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  .ledger .col-formula,
+  .ledger .col-type,
   .drawer-hint {
     display: none;
+  }
+  .ledger .col-formula {
+    width: 104px;
+  }
+  .ledger .col-num {
+    width: 60px;
   }
 }
 

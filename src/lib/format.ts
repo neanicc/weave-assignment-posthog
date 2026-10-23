@@ -11,7 +11,7 @@ export const pct = (share: number): string => `${Math.round(share * 100)}%`;
 function topScopes(e: EngineerScore, pillar: 'ship' | 'fix', count = 2): string[] {
   const byScope = new Map<string, number>();
   for (const p of e.prs) {
-    if (!p.scope || (p.pillar && p.pillar !== pillar)) continue;
+    if (!p.scope || p.points <= 0 || (p.pillar && p.pillar !== pillar)) continue;
     byScope.set(p.scope, (byScope.get(p.scope) ?? 0) + p.points);
   }
   return [...byScope].sort((a, b) => b[1] - a[1]).slice(0, count).map(([s]) => s);

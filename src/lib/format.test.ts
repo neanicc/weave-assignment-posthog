@@ -41,6 +41,11 @@ describe('format', () => {
     expect(summary(e)).toBe('Mostly ships new work in flags and hogql');
   });
 
+  it('ignores scopes that only appear in zero-point PRs', () => {
+    const e = eng({ ship: 30, total: 30, prs: [scoredPr('flags', 30), scoredPr('capped-only', 0)] });
+    expect(summary(e)).toBe('Mostly ships new work in flags');
+  });
+
   it('summarizes a fixer', () => {
     const e = eng({ ship: 20, fix: 60, unblock: 20, total: 100, prs: [scoredPr('ingestion', 10)] });
     expect(summary(e)).toBe('Mostly fixes what breaks in ingestion');
