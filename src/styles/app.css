@@ -98,6 +98,11 @@ button {
   max-width: 120ch;
 }
 
+.lede-cta {
+  color: var(--ink);
+  font-weight: 500;
+}
+
 .lede a,
 .drawer-title a {
   background-image: linear-gradient(currentColor, currentColor);
@@ -975,8 +980,22 @@ button {
   transition: background-size 250ms var(--ease-out), color var(--dur-ui) ease;
 }
 
-.ledger .col-num a:hover {
+.ledger .col-num a:hover,
+.ledger tr:has(.col-title a:hover) .col-num a {
   color: var(--ink);
+  background-size: 100% 1px;
+}
+
+.ledger .col-title a {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0 1px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 250ms var(--ease-out);
+}
+
+.ledger .col-title a:hover,
+.ledger tr:has(.col-num a:hover) .col-title a {
   background-size: 100% 1px;
 }
 
@@ -1103,6 +1122,63 @@ button {
   }
   .ledger .col-num {
     width: 60px;
+  }
+}
+
+@media (max-width: 1360px) {
+  .card-foot {
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  }
+}
+
+/* Short laptop screens (browser chrome leaves ~720-790px): same type sizes, less air. */
+@media (min-width: 1101px) and (max-height: 820px) {
+  .page {
+    padding-top: 20px;
+  }
+  .top {
+    margin-bottom: 14px;
+  }
+  .toolbar {
+    margin-bottom: 8px;
+  }
+  .cards {
+    gap: 6px;
+  }
+  .card {
+    padding: 7px 14px;
+  }
+  .card-foot {
+    margin-top: 5px;
+  }
+  .subbox {
+    padding: 4px 10px;
+    line-height: 1.4;
+  }
+  .pr-link {
+    line-height: 1.4;
+  }
+  .col-side {
+    gap: 8px;
+  }
+  .panel {
+    padding: 12px 14px;
+  }
+  .method-pillars {
+    margin: 8px 0;
+  }
+  .method-notes {
+    gap: 3px;
+    line-height: 1.4;
+  }
+  .runner {
+    min-height: 23px;
+  }
+}
+
+@media (min-width: 1101px) and (max-height: 740px) {
+  .method-lede {
+    display: none;
   }
 }
 

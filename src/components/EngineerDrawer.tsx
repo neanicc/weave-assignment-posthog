@@ -85,7 +85,11 @@ export function EngineerDrawer({ engineer: e, days, onClose }: Props) {
                         #{p.n}
                       </a>
                     </td>
-                    <td className="col-title">{p.title}</td>
+                    <td className="col-title">
+                      <a href={prUrl(p.n)} target="_blank" rel="noreferrer" tabIndex={-1}>
+                        {p.title}
+                      </a>
+                    </td>
                     <td className="col-type">
                       <span className={`pill pill-${p.pillar}`}>{p.type}</span>
                     </td>
@@ -111,7 +115,10 @@ export function EngineerDrawer({ engineer: e, days, onClose }: Props) {
                       </a>
                     </td>
                     <td className="col-title">
-                      {r.title} <span className="muted">by {r.prAuthor}</span>
+                      <a href={prUrl(r.pr)} target="_blank" rel="noreferrer" tabIndex={-1}>
+                        {r.title}
+                      </a>{' '}
+                      <span className="muted">by {r.prAuthor}</span>
                     </td>
                     <td className="col-type">{KIND_LABEL[r.kind]}</td>
                     <td className="col-formula num">

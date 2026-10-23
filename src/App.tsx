@@ -95,7 +95,7 @@ export default function App() {
             <a href="https://github.com/PostHog/posthog" target="_blank" rel="noreferrer">
               PostHog/posthog
             </a>
-            . Click anyone to see each PR behind their score.
+            . <strong className="lede-cta">Click anyone to see each PR behind their score.</strong>
           </p>
         </div>
       </header>
