@@ -9,8 +9,16 @@
       "Bash(gh pr merge * --admin*)",
       "Bash(gh repo delete*)",
       "Bash(gh secret set*)",
-      "Bash(gh auth token --show*)",
-      "Bash(vercel --prod*)"
+      "Bash(vercel --prod*)",
+      "Bash(git push *+*)",
+      "Bash(git push * main*)",
+      "Bash(git push * *:main*)",
+      "Bash(git -c *)",
+      "Bash(git --*)",
+      "Bash(gh auth token*)",
+      "Bash(gh auth status -t*)",
+      "Bash(gh auth status *--show-token*)",
+      "Bash(gh api *pulls/*/merge*)"
     ]
   }
 }
