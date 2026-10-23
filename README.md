@@ -41,6 +41,8 @@ Rank is Ship + Fix + Unblock. Ties go to whoever worked in more product areas.
 - **Hot areas** are the 10% of areas touched by the most distinct engineers.
 - **Bots** are removed: dependabot, PostHog's automation accounts and deleted users.
 - **Daily cap.** Only a person's best 5 PRs and best 10 reviews per day count.
+  No one ships 150 PRs a day by hand, so past that point extra volume shows how
+  much was automated, not more impact.
 - **Windows.** Scoring runs in the browser, so switching between 30, 90 and 120
   days is instant. 90 is the default.
 
